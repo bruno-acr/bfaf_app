@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Questionário</h2>
+
+<form method="POST">
+
+  {% for q in questoes %}
+    <div class="pergunta">
+      <h3>{{ q.id }} - {{ q.texto }}</h3>
+
+      {# Se a pergunta tiver alternativas #}
+      {% if q.alternativas %}
+        {% for letra, label in q.labels.items() %}
+          <label>
+            <input type="radio"
+                   name="q_{{ q.id }}_alt"
+                   value="{{ letra }}">
+            {{ letra }} - {{ label }}
+          </label><br>
+        {% endfor %}
+      {% endif %}
+
+      {# Se a pergunta tem campo aberto #}
+      {% if q.open_field %}
+        <label>Resposta aberta:</label><br>
+        <input type="text" name="q_{{ q.id }}_open"><br><br>
+      {% endif %}
+
+      {# Se a pergunta exige julgamento do profissional #}
+      {% if q.requires_judgement %}
+        <label>Julgamento do profissional:</label><br>
+        <select name="q_{{ q.id }}_judgement">
+          <option value="">Selecione</option>
+          <option value="CORRETO">Correto</option>
+          <option value="INCORRETO">Incorreto</option>
+          <option value="ALFABETIZADO">Alfabetizado</option>
+          <option value="ANALFABETO">Analfabeto</option>
+        </select><br><br>
+      {% endif %}
+
+      <hr>
+    </div>
+  {% endfor %}
+
+  <button type="submit">Finalizar Questionário</button>
+</form>
+
+{% endblock %}
+

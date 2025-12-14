@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dados do Paciente</h2>
+
+<form method="POST">
+  <label>Nome do paciente:</label>
+  <input type="text" name="patient_name" required>
+
+  <label>Medicamento:</label>
+  <input type="text" name="medication" required>
+
+  <label>Doença:</label>
+  <input type="text" name="disease" required>
+
+  <label>Profissional entrevistador:</label>
+  <input type="text" name="professional_name" required>
+
+  <button type="submit">Iniciar Questionário</button>
+</form>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <section>
+    <h2>Introdução</h2>
+    <p>{{ intro }}</p>
+    <p><strong>Instruções:</strong> O questionário deve ser aplicado pelo profissional de saúde que está atendendo o paciente. Para cada medicamento de uso crônico aplique o questionário separadamente.</p>
+    <a href="{{ url_for('patient') }}" class="btn">Iniciar aplicação</a>
+  </section>
+{% endblock %}

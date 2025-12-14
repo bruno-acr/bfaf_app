@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Resultado Final</h2>
+
+<p><strong>Pontuação Total:</strong> {{ stats.total_score }}</p>
+<p><strong>Total de Barreiras:</strong> {{ stats.total_barreiras }}</p>
+<p><strong>Total de Facilitadores:</strong> {{ stats.total_facilitadores }}</p>
+
+<h3>Respostas Registradas</h3>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Pergunta</th>
+    <th>Alternativa</th>
+    <th>Valor</th>
+    <th>Texto Aberto</th>
+    <th>Julgamento</th>
+    <th>Barreira?</th>
+    <th>Facilitador?</th>
+  </tr>
+
+  {% for r in respostas %}
+  <tr>
+    <td>{{ r.question_text }}</td>
+    <td>{{ r.alternativa }}</td>
+    <td>{{ r.valor }}</td>
+    <td>{{ r.open_text }}</td>
+    <td>{{ r.judgement }}</td>
+    <td>{{ r.is_barreira }}</td>
+    <td>{{ r.is_facilitador }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br>
+<a href="{{ url_for('index') }}">Voltar ao início</a>
+
+{% endblock %}
