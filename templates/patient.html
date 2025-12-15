@@ -1,6 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Dados do Paciente</h2>
+<style>
+  form {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;           /* centraliza o formulário */
+    padding: 24px;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+
+  button {
+    margin-top: 30px;        /* espaço acima do botão */
+    padding: 14px 28px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    background-color: #8fd19e;
+    color: #1f3d2b;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;       /* centraliza o botão */
+  }
+
+  button:hover {
+    background-color: #7acb8c;
+  }
+</style>
+
+<h2 style="text-align:center;">Dados do Paciente</h2>
 
 <form method="POST">
   <label>Nome do paciente:</label>

@@ -1,5 +1,4 @@
 import sqlite3
-import db
 
 DB_NAME = "bfaf.db"
 

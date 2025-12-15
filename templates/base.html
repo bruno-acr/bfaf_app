@@ -4,17 +4,79 @@
   <meta charset="utf-8">
   <title>BFAF - Questionário</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS externo, se houver -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Estilo base -->
+  <style>
+    /* Fonte e layout base */
+    html, body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        color: #000;
+    }
+
+    header {
+        background-color: #f2f2f2;
+        padding: 15px 20px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    header h1 {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        margin: 0;
+    }
+
+    main {
+        flex: 1;  /* ocupa todo o espaço restante */
+        padding: 20px;
+    }
+
+    footer {
+        background-color: #f2f2f2;
+        border-top: 1px solid #ccc;
+        padding: 15px 20px;
+        text-align: center;
+    }
+
+    button {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+    a {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #007BFF;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+  </style>
 </head>
+
 <body>
   <header>
     <h1>BFAF — Barreiras e Facilitadores na Adesão à Farmacoterapia</h1>
   </header>
+
   <main>
     {% block content %}{% endblock %}
   </main>
+
   <footer>
-    <small>Aplicativo local — desenvolvido para uso em consulta.</small>
+    <!-- Footer sempre no limite inferior da página -->
   </footer>
 </body>
 </html>

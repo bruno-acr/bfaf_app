@@ -5,18 +5,21 @@
   section {
     width: 90%;              /* largura responsiva */
     max-width: 1100px;       /* limite máximo */
-    margin: 0 auto;          /* centraliza */
+    margin: 0 auto;          /* centraliza horizontalmente */
     padding: 24px;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.6;        /* melhora a leitura */
+    text-align: center;      /* centraliza todo o conteúdo dentro da seção */
   }
 
   ul {
     margin-left: 24px;
+    text-align: left;        /* mantém as listas alinhadas à esquerda */
+    display: inline-block;   /* para respeitar a centralização da section */
   }
 
   .btn {
-    margin-top: 32px;
+    margin-top: 40px;        /* aumenta o espaçamento acima do botão */
     padding: 18px 36px;
     background-color: #8fd19e; /* verde pastel */
     color: #1f3d2b;
@@ -25,7 +28,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    display: block;
+    display: inline-block;   /* centraliza com text-align:center do section */
   }
 
   .btn:hover {

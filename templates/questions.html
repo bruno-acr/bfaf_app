@@ -3,6 +3,33 @@
 
 <h2>Questionário</h2>
 
+<style>
+/* Perguntas */
+.pergunta h3 {
+    font-family: Arial, sans-serif; /* Fonte da pergunta */
+    font-size: 18px;               /* Tamanho da fonte da pergunta */
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Alternativas (radio buttons / checkboxes) */
+.pergunta label {
+    font-family: Arial, sans-serif; /* Fonte das alternativas */
+    font-size: 16px;               /* Tamanho da fonte das alternativas */
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Campo de texto e select */
+.pergunta input[type="text"], .pergunta select {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 4px;
+    margin-top: 2px;
+    margin-bottom: 8px;
+}
+</style>
+
 <form method="POST">
 
   {% for q in questoes %}
@@ -17,14 +44,14 @@
                    name="q_{{ q.id }}_alt"
                    value="{{ letra }}">
             {{ letra }} - {{ label }}
-          </label><br>
+          </label>
         {% endfor %}
       {% endif %}
 
       {# Se a pergunta tem campo aberto #}
       {% if q.open_field %}
         <label>Resposta aberta:</label><br>
-        <input type="text" name="q_{{ q.id }}_open"><br><br>
+        <input type="text" name="q_{{ q.id }}_open"><br>
       {% endif %}
 
       {# Se a pergunta exige julgamento do profissional #}
@@ -36,7 +63,7 @@
           <option value="INCORRETO">Incorreto</option>
           <option value="ALFABETIZADO">Alfabetizado</option>
           <option value="ANALFABETO">Analfabeto</option>
-        </select><br><br>
+        </select><br>
       {% endif %}
 
       <hr>
@@ -47,4 +74,3 @@
 </form>
 
 {% endblock %}
-

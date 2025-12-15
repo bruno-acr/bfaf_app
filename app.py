@@ -208,24 +208,138 @@ def admin():
     return render_template("admin.html", dataset=dataset)
 
 
-# ======================================================
-# ADMIN — exportar CSV
-# ======================================================
 @app.route('/admin/export')
 def admin_export():
+    from flask import Response
+
     patients = db.get_all_patients()
 
     def generate_csv():
-        yield "patient_id,patient_name,medication,disease,professional_name\n"
+        header = [
+            "patient_id",
+            "patient_name",
+            "medication",
+            "disease",
+            "professional_name",
+            "question_id",
+            "question_text",
+            "alternativa",
+            "alternativa_label",
+            "open_text",
+            "judgement",
+            "valor",
+            "is_barreira",
+            "is_facilitador",
+            "classificacao_texto"
+        ]
+        yield ",".join(header) + "\n"
+
         for p in patients:
-            yield f"{p['id']},{p['patient_name']},{p['medication']},{p['disease']},{p['professional_name']}\n"
+            respostas = db.get_responses_by_patient(p["id"])
+            for r in respostas:
+                q = QUESTION_MAP.get(r["question_id"], {})
+                question_text = q.get("texto", f"Pergunta {r['question_id']}")
+                alternativa_label = ""
+                if r.get("alternativa") and q.get("labels"):
+                    alternativa_label = q["labels"].get(r["alternativa"], "")
+                row = [
+                    str(p["id"]),
+                    p["patient_name"],
+                    p["medication"],
+                    p["disease"],
+                    p["professional_name"],
+                    str(r["question_id"]),
+                    question_text,
+                    r.get("alternativa", ""),
+                    alternativa_label,
+                    r.get("open_text", ""),
+                    r.get("judgement", ""),
+                    str(r.get("valor", 0)),
+                    str(r.get("is_barreira", 0)),
+                    str(r.get("is_facilitador", 0)),
+                    r.get("classificacao_texto", "")
+                ]
+                row_safe = [f'"{c}"' if "," in c else c for c in row]
+                yield ",".join(row_safe) + "\n"
 
     return Response(
         generate_csv(),
         mimetype="text/csv",
-        headers={"Content-Disposition": "attachment;filename=patients.csv"}
+        headers={"Content-Disposition": "attachment;filename=patients_respostas_detalhado.csv"}
     )
 
+
+@app.route('/admin/export_wide')
+def admin_export_wide():
+    from flask import Response
+    import csv
+    import io
+
+    patients = db.get_all_patients()
+    question_ids = [q["id"] for q in QUESTOES]
+    question_texts = [q["texto"] for q in QUESTOES]
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Cabeçalho
+    header = ["patient_id", "patient_name", "medication", "disease", "professional_name"]
+    for qid, qtext in zip(question_ids, question_texts):
+        header.append(f"Q{qid} Alternativa")
+        header.append(f"Q{qid} Resposta")
+        header.append(f"Q{qid} Valor")
+        header.append(f"Q{qid} Barreira/Facilitador")
+    writer.writerow(header)
+
+    for p in patients:
+        row = [
+            p["id"],
+            p["patient_name"],
+            p["medication"],
+            p["disease"],
+            p["professional_name"]
+        ]
+
+        respostas = {r["question_id"]: r for r in db.get_responses_by_patient(p["id"])}
+        for qid in question_ids:
+            r = respostas.get(qid)
+            if r:
+                q = QUESTION_MAP.get(qid, {})
+
+                # Alternativa escolhida
+                alternativa = r.get("alternativa", "")
+
+                # Texto da resposta
+                if r.get("open_text"):
+                    resposta_texto = r["open_text"]
+                elif alternativa and q.get("labels"):
+                    resposta_texto = q["labels"].get(alternativa, alternativa)
+                else:
+                    resposta_texto = ""
+
+                # Valor
+                valor = r.get("valor", 0)
+
+                # Barreira ou Facilitador
+                if r.get("is_barreira"):
+                    bf = "Barreira"
+                elif r.get("is_facilitador"):
+                    bf = "Facilitador"
+                else:
+                    bf = ""
+
+                row.extend([alternativa, resposta_texto, valor, bf])
+            else:
+                # Se não houver resposta, deixa as 4 colunas vazias
+                row.extend(["", "", "", ""])
+        writer.writerow(row)
+
+    output.seek(0)
+    return Response(
+        output,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=patients_respostas_wide.csv"}
+    )
 
 # =====================================================================
 # MAIN — iniciar servidor

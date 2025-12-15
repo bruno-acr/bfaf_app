@@ -4,7 +4,8 @@
 
 <p>
   <a href="{{ url_for('index') }}" class="btn">Voltar</a>
-  <a href="{{ url_for('admin_export') }}" class="btn" style="margin-left:10px;">Exportar CSV</a>
+  <a href="{{ url_for('admin_export') }}" class="btn" style="margin-left:10px;">Exportar CSV - Questão por linha</a>
+  <a href="{{ url_for('admin_export_wide') }}" class="btn" style="margin-left:10px;">Exportar CSV - Paciente por linha</a>
 </p>
 
 {% for item in dataset %}

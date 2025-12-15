@@ -11,6 +11,7 @@ th, td { border: 1px solid #ccc; padding: 8px; }
 th { background: #f0f0f0; }
 .barreira { background: #ffe5e5; }
 .facilitador { background: #e5ffe5; }
+td.center { text-align: center; }
 </style>
 </head>
 
@@ -24,71 +25,35 @@ th { background: #f0f0f0; }
 
 <hr>
 
-<h3>Barreiras Identificadas</h3>
+<h3>Barreiras e Facilitadores</h3>
 
-{% if barreiras %}
+{% set max_rows = [barreiras|length, facilitadores|length]|max %}
+
+{% if max_rows > 0 %}
 <table>
 <tr>
-    <th>Item</th>
-    <th>Resposta</th>
-    <th>Identificação da barreira</th>
+    <th>Barreiras</th>
+    <th>Facilitadores</th>
 </tr>
-{% for r in barreiras %}
-<tr class="barreira">
-    <td>{{ r.question_text }}</td>
-    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
-    <td>{{ r.classificacao_texto }}</td>
+
+{% for i in range(max_rows) %}
+<tr>
+    <td class="barreira">
+        {% if i < barreiras|length %}
+            {{ barreiras[i].classificacao_texto }}
+        {% endif %}
+    </td>
+    <td class="facilitador">
+        {% if i < facilitadores|length %}
+            {{ facilitadores[i].classificacao_texto }}
+        {% endif %}
+    </td>
 </tr>
 {% endfor %}
 </table>
 {% else %}
-<p>Nenhuma barreira identificada.</p>
+<p>Nenhuma barreira ou facilitador identificado.</p>
 {% endif %}
-
-<hr>
-
-<h3>Facilitadores Identificados</h3>
-
-{% if facilitadores %}
-<table>
-<tr>
-    <th>Item</th>
-    <th>Resposta</th>
-    <th>Identificação do facilitador</th>
-</tr>
-{% for r in facilitadores %}
-<tr class="facilitador">
-    <td>{{ r.question_text }}</td>
-    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
-    <td>{{ r.classificacao_texto }}</td>
-</tr>
-{% endfor %}
-</table>
-{% else %}
-<p>Nenhum facilitador identificado.</p>
-{% endif %}
-
-<hr>
-
-<h3>Todas as respostas</h3>
-
-<table>
-<tr>
-    <th>Item</th>
-    <th>Resposta</th>
-    <th>Escore</th>
-    <th>Classificação</th>
-</tr>
-
-{% for r in respostas %}
-<tr>
-    <td>{{ r.question_text }}</td>
-    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
-    <td style="text-align:center;">{{ r.valor }}</td>
-    <td>{{ r.classificacao_texto }}</td>
-</tr>
-{% endfor %}
-</table>
 
 <br>
 <a href="{{ url_for('index') }}">⬅ Voltar</a>
