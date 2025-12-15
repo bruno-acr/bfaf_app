@@ -1,38 +1,97 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Resultado Final</h2>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Resultado BFAF</title>
 
-<p><strong>Pontuação Total:</strong> {{ stats.total_score }}</p>
-<p><strong>Total de Barreiras:</strong> {{ stats.total_barreiras }}</p>
-<p><strong>Total de Facilitadores:</strong> {{ stats.total_facilitadores }}</p>
+<style>
+body { font-family: Arial; margin: 40px; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 8px; }
+th { background: #f0f0f0; }
+.barreira { background: #ffe5e5; }
+.facilitador { background: #e5ffe5; }
+</style>
+</head>
 
-<h3>Respostas Registradas</h3>
+<body>
 
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Pergunta</th>
-    <th>Alternativa</th>
-    <th>Valor</th>
-    <th>Texto Aberto</th>
-    <th>Julgamento</th>
-    <th>Barreira?</th>
-    <th>Facilitador?</th>
-  </tr>
+<h2>Resultado do Questionário BFAF</h2>
 
-  {% for r in respostas %}
-  <tr>
+<p><strong>Escore total:</strong> {{ stats.total_score }}</p>
+<p><strong>Nº de barreiras:</strong> {{ stats.total_barreiras }}</p>
+<p><strong>Nº de facilitadores:</strong> {{ stats.total_facilitadores }}</p>
+
+<hr>
+
+<h3>Barreiras Identificadas</h3>
+
+{% if barreiras %}
+<table>
+<tr>
+    <th>Item</th>
+    <th>Resposta</th>
+    <th>Identificação da barreira</th>
+</tr>
+{% for r in barreiras %}
+<tr class="barreira">
     <td>{{ r.question_text }}</td>
-    <td>{{ r.alternativa }}</td>
-    <td>{{ r.valor }}</td>
-    <td>{{ r.open_text }}</td>
-    <td>{{ r.judgement }}</td>
-    <td>{{ r.is_barreira }}</td>
-    <td>{{ r.is_facilitador }}</td>
-  </tr>
-  {% endfor %}
+    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
+    <td>{{ r.classificacao_texto }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>Nenhuma barreira identificada.</p>
+{% endif %}
+
+<hr>
+
+<h3>Facilitadores Identificados</h3>
+
+{% if facilitadores %}
+<table>
+<tr>
+    <th>Item</th>
+    <th>Resposta</th>
+    <th>Identificação do facilitador</th>
+</tr>
+{% for r in facilitadores %}
+<tr class="facilitador">
+    <td>{{ r.question_text }}</td>
+    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
+    <td>{{ r.classificacao_texto }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>Nenhum facilitador identificado.</p>
+{% endif %}
+
+<hr>
+
+<h3>Todas as respostas</h3>
+
+<table>
+<tr>
+    <th>Item</th>
+    <th>Resposta</th>
+    <th>Escore</th>
+    <th>Classificação</th>
+</tr>
+
+{% for r in respostas %}
+<tr>
+    <td>{{ r.question_text }}</td>
+    <td>{{ r.alternativa_label or r.open_text or "—" }}</td>
+    <td style="text-align:center;">{{ r.valor }}</td>
+    <td>{{ r.classificacao_texto }}</td>
+</tr>
+{% endfor %}
 </table>
 
 <br>
-<a href="{{ url_for('index') }}">Voltar ao início</a>
+<a href="{{ url_for('index') }}">⬅ Voltar</a>
 
-{% endblock %}
+</body>
+</html>

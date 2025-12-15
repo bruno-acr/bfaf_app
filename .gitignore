@@ -1,0 +1,15 @@
+# ambiente virtual
+.venv*
+venv*
+env*
+
+# python
+__pycache__/
+*.pyc
+
+# banco local
+*.db
+*.sqlite3
+
+# mac
+.DS_Store

@@ -10,7 +10,11 @@
 {% for item in dataset %}
   <section style="border:1px solid #ccc; padding:10px; margin-bottom:18px;">
     <h3>Paciente #{{ item.patient.id }} — {{ item.patient.patient_name }}</h3>
-    <p><strong>Medicamento:</strong> {{ item.patient.medication }} &nbsp; | &nbsp; <strong>Doença:</strong> {{ item.patient.disease }} &nbsp; | &nbsp; <strong>Profissional:</strong> {{ item.patient.professional_name }}</p>
+    <p>
+      <strong>Medicamento:</strong> {{ item.patient.medication }} &nbsp; | &nbsp;
+      <strong>Doença:</strong> {{ item.patient.disease }} &nbsp; | &nbsp;
+      <strong>Profissional:</strong> {{ item.patient.professional_name }}
+    </p>
 
     <p>
       <strong>Soma total:</strong> {{ item.stats.total_score }} &nbsp;
