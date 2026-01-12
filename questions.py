@@ -98,6 +98,7 @@ QUESTOES = [
     {
         "id": 8,
         "texto": "Qual a sua idade?",
+        "open_field": True,
         "alternativas": {"A": -1, "B": 1},
         "labels": {
             "A": "Paciente com idade inferior a 60 anos",

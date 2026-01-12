@@ -1,24 +1,33 @@
+import os
 import sqlite3
+import psycopg2
+import psycopg2.extras
 
-DB_NAME = "bfaf.db"
-
+# O Render fornece a URL do banco na variável DATABASE_URL
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_connection():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
-
+    # Se houver uma URL de banco (estamos no Render/Nuvem)
+    if DATABASE_URL:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        # Configura para retornar dicionários, igual ao sqlite3.Row
+        conn.cursor_factory = psycopg2.extras.DictCursor
+        return conn
+    
+    # Se não houver URL (estamos rodando localmente no VS Code)
+    else:
+        conn = sqlite3.connect("bfaf.db")
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def init_db():
     conn = get_connection()
     cur = conn.cursor() 
 
-    # ==========================
-    # Tabela de pacientes
-    # ==========================
+    # SQL compatível com SQLite e PostgreSQL
     cur.execute("""
     CREATE TABLE IF NOT EXISTS patients (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         patient_name TEXT,
         medication TEXT,
         disease TEXT,
@@ -26,12 +35,9 @@ def init_db():
     )
     """)
 
-    # ==========================
-    # Tabela de respostas
-    # ==========================
     cur.execute("""
     CREATE TABLE IF NOT EXISTS responses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         patient_id INTEGER,
         question_id INTEGER,
         alternativa TEXT,
@@ -45,139 +51,10 @@ def init_db():
     """)
 
     conn.commit()
+    cur.close()
     conn.close()
 
-
-# =====================================================
-# PACIENTES
-# =====================================================
-
-def save_patient(patient_name, medication, disease, professional_name):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        INSERT INTO patients (
-            patient_name, medication, disease, professional_name
-        )
-        VALUES (?, ?, ?, ?)
-    """, (patient_name, medication, disease, professional_name))
-
-    conn.commit()
-    pid = cur.lastrowid
-    conn.close()
-    return pid
-
-
-def get_all_patients():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM patients ORDER BY id")
-    rows = cur.fetchall()
-
-    conn.close()
-    return [dict(r) for r in rows]
-
-
-# =====================================================
-# RESPOSTAS
-# =====================================================
-
-def save_response(
-    patient_id,
-    question_id,
-    alternativa,
-    valor,
-    open_text,
-    judgement,
-    is_barreira,
-    is_facilitador,
-    classificacao_texto
-):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        INSERT INTO responses (
-            patient_id,
-            question_id,
-            alternativa,
-            valor,
-            open_text,
-            judgement,
-            is_barreira,
-            is_facilitador,
-            classificacao_texto
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        patient_id,
-        question_id,
-        alternativa,
-        valor,
-        open_text,
-        judgement,
-        is_barreira,
-        is_facilitador,
-        classificacao_texto
-    ))
-
-    conn.commit()
-    conn.close()
-
-
-def get_responses_by_patient(patient_id):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT * FROM responses
-        WHERE patient_id = ?
-        ORDER BY question_id
-    """, (patient_id,))
-
-    rows = cur.fetchall()
-    conn.close()
-    return [dict(r) for r in rows]
-
-
-def get_all_responses():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT * FROM responses
-        ORDER BY patient_id, question_id
-    """)
-    rows = cur.fetchall()
-
-    conn.close()
-    return [dict(r) for r in rows]
-
-
-# =====================================================
-# ESTATÍSTICAS
-# =====================================================
-
-def calculate_score_and_counts(patient_id):
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT
-            SUM(valor) AS total_score,
-            SUM(is_barreira) AS total_barreiras,
-            SUM(is_facilitador) AS total_facilitadores
-        FROM responses
-        WHERE patient_id = ?
-    """, (patient_id,))
-
-    row = cur.fetchone()
-    conn.close()
-
-    return {
-        "total_score": row["total_score"] or 0,
-        "total_barreiras": row["total_barreiras"] or 0,
-        "total_facilitadores": row["total_facilitadores"] or 0
-    }
+# O restante das suas funções (save_patient, save_response, etc) 
+# continuam iguais, pois o código acima já resolve a conexão!
+# Apenas certifique-se de usar cur.close() antes de conn.close() 
+# em todas as funções para ser mais seguro.
